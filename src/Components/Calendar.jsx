@@ -2,17 +2,18 @@ import { Controller } from "react-hook-form";
 import { Calendar } from "primereact/calendar";
 
 export default function CalendarInput({ name, label, control, rules = {} }) {
+  const today = new Date();
+  const maxSelectableDate = new Date(
+    today.getFullYear() - 18,
+    today.getMonth(),
+    today.getDate()
+  );
+
   const mergedRules = {
     required: "This field is required",
     validate: (value) => {
-      if (!value) return true; 
-      const today = new Date();
-      const Age = new Date(
-        today.getFullYear() - 18,
-        today.getMonth(),
-        today.getDate()
-      );
-      return value <= Age || "Invalid Age";
+      if (!value) return true;
+      return value <= maxSelectableDate || "Invalid Age";
     },
     ...rules,
   };
@@ -34,9 +35,11 @@ export default function CalendarInput({ name, label, control, rules = {} }) {
                   value={field.value}
                   onChange={(e) => field.onChange(e.value)}
                   dateFormat="dd/mm/yy"
-                  showIcon 
+                  showIcon
                   placeholder="Select date"
                   className={`input-box ${fieldState.error ? "p-invalid" : ""}`}
+                  maxDate={maxSelectableDate}
+                  showButtonBar
                 />
                 <small className="p-error inline-error">
                   {fieldState.error?.message || "\u00A0"}
